@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+  </head>
+  <body>
+    <h1>To Do List</h1>
+    <input id="inp" type="text" /><input id="date" type="date" />
+    <button id="but">add</button> <button id="sort">I am a sort button</button>
+    <ul id="listBody"></ul>
+  </body>
+  <script>
+    const done = false;
+    const but = document.getElementById('but');
+    const datBut = document.getElementById('datBut');
+    const inp = document.getElementById('inp');
+    const listBody = document.getElementById('listBody');
+    const sortBut = document.getElementById('sort');
+    sortBut.addEventListener('click', () => {
+      sortStuff();
+    });
+
+    but.addEventListener('click', addEntry);
+
+    const time = new Date().getTime();
+    //alert(new Date(time).getDate());
+    const n = new Date();
+    //alert(new Date(n).getTime());
+
+    function addEntry() {
+      let newEl = document.createElement('li');
+      newEl.setAttribute('class', 'el');
+      let newElText = document.createElement('span');
+      let date = new Date(document.getElementById('date').value);
+      let dateEl = document.createElement('span');
+      dateEl.setAttribute('class', 'dat');
+      dateEl.innerText = date;
+
+      newElText.innerText = inp.value;
+      newEl.appendChild(newElText);
+      const checkBox = document.createElement('input');
+      checkBox.setAttribute('type', 'checkbox');
+      listBody.appendChild(newEl);
+      newEl.appendChild(checkBox);
+      newEl.appendChild(dateEl);
+      newEl.addEventListener('click', () => {
+        addOrRemoveStrike(newEl, checkBox, dateEl, date);
+      });
+      let dateArr = document.getElementsByClassName('dat');
+      dateArr = [...dateArr];
+      checkDates(dateArr);
+    }
+
+    function addOrRemoveStrike(newEl, checkBox, dateEl, date) {
+      const strike = document.createElement('strike');
+      const strikeHolder = document.createElement('li');
+      strikeHolder.setAttribute('class', 'el');
+      strikeHolder.appendChild(strike);
+      strikeHolder.appendChild(checkBox);
+      strikeHolder.appendChild(dateEl);
+      checkBox.setAttribute('checked', '');
+      strike.innerText = newEl.firstChild.innerText;
+      listBody.replaceChild(strikeHolder, newEl);
+      strikeHolder.addEventListener('click', () => {
+        listBody.replaceChild(newEl, strikeHolder);
+        newEl.appendChild(checkBox);
+        checkBox.removeAttribute('checked');
+        newEl.appendChild(dateEl);
+        // dateEl.innerText = date;
+      });
+    }
+
+    function checkDates(array) {
+      array.forEach(item => {
+        //console.log(item.innerText);
+        thisDate = new Date(item.innerText).getTime();
+        console.log(thisDate);
+        if (thisDate < Date.now()) {
+          item.style.color = 'red';
+        }
+      });
+    }
+
+    function sortStuff() {
+      let els = document.getElementsByClassName('el');
+      els = [...els];
+      els.sort((a, b) => {
+        return a.firstChild.innerText > b.firstChild.innerText;
+      });
+      els.forEach(item => {
+        console.log(item);
+        listBody.appendChild(item);
+      });
+    }
+  </script>
+</html>
+
+<!--
+  Some extension work...
+  * Add a due by date to your tasks which renders how long you have to do them, and colours them red if they are overdue.
+  * Allow your checklist to be sorted alphabetically or by due date.
+-->
